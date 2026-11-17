@@ -1,0 +1,14 @@
+== EVIDENCIA alumno=E033 hora=2026-11-17T21:21:00Z origen=08-validacion-app
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-17T21:09:17 scn=3168363
+
+SERVICE
+------------------------
+academia_app/FREEPDB1
+
+ACTIVOS
+-------
+  17600
+
+FILA101
+--------
+ACTIVO
