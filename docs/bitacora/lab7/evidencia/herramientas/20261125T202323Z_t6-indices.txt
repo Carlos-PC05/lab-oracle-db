@@ -1,0 +1,31 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T20:23:23Z origen=t6/indices
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T20:05:46 scn=3226720
+== 1 · Índices de T6.CLIENTE ==
+
+INDEX_NAME           COLUMNAS                       STATUS     VISIBLE   LEAF_BLOCKS DISTINCT_KEYS CLUSTERING_FACTOR CF PARECE
+-------------------- ------------------------------ ---------- --------- ----------- ------------- ----------------- ------------
+IX_T6_CLI_CIUDAD     CIUDAD                         VALID      VISIBLE           252             2              2246 A BLOQUES
+IX_T6_CLI_EMAIL      EMAIL                          VALID      VISIBLE           516         99328             20118 INTERMEDIO
+PK_T6_CLIENTE        ID_CLIENTE                     VALID      VISIBLE           208        100000              1246 A BLOQUES
+== 2 · Redundancia: índices cuyas columnas son el principio de otro índice ==
+== 3 · Uso registrado (DBA_INDEX_USAGE) ==
+
+INDEX_NAME              ACCESOS EJECUCIONES LAST_USED
+-------------------- ---------- ----------- -------------------
+PK_T6_CLIENTE              4100        4100 2026-11-25 18:07:15
+== 4 · Selectividad de cada columna (1/distintos) ==
+
+COLUMN_NAME      NUM_DISTINCT PCT_POR_VALOR HISTOGRAM
+---------------- ------------ ------------- ---------------
+ID_CLIENTE             100000          .001 NONE
+APELLIDOS              100000          .001 NONE
+EMAIL                   99328          .001 NONE
+DNI                     98680          .001 NONE
+FECHA_ALTA               2000           .05 NONE
+SYS_STUBJHRJ63BY            2            50 NONE
+YQ61EBQAQU2TM_
+
+PAIS                        2            50 NONE
+CIUDAD                      2            50 NONE
+COMUNIDAD                   2            50 NONE
+NOMBRE                      1           100 NONE

@@ -68,6 +68,8 @@ Las pequeñas diferencias se deben al redondeo y a la medición de las tandas. L
 
 2. En V1 medí **5.117 lecturas lógicas por ejecución** y un **p95 de 118,3 ms** ([C07 diagnosticar](lab7/evidencia/casos/20261125T180536Z_C07_diagnosticar.txt), [C07 entender](lab7/evidencia/casos/20261125T180529Z_C07_entender.txt)). En V2 el **p95 fue 0,7 ms**, pero la validación dejó vacía la cifra de lecturas y marcó dos fallos, por lo que no puedo dar ese valor con esta evidencia ([C07 validar](lab7/evidencia/casos/20261125T180729Z_C07_validar.txt)). El plan real capturado al solucionar sí muestra `INDEX RANGE SCAN` en V2 ([C07 solucionar](lab7/evidencia/casos/20261125T180713Z_C07_solucionar.txt)). `EXPLAIN PLAN` predijo el índice con una variable tratada como texto, sin ejecutar la consulta ni reflejar el tipo numérico usado por la aplicación; el cursor real reveló la conversión implícita.
 
+**Repetición:** V1 tuvo 5.142 lecturas por búsqueda y p95 de 109,7 ms; V2, 94 lecturas y 0,6 ms. Las tres comprobaciones pasaron ([C07 validar](lab7/evidencia/casos/20261125T202459Z_C07_validar.txt)).
+
 ## Parte D · C08 · E-Rows frente a A-Rows
 1. Estimación y filas reales antes y después del grupo de columnas. ¿En qué línea del plan se separan por primera vez?
 2. ¿Por qué el optimizador multiplicaba mal las dos selectividades?
@@ -76,6 +78,8 @@ Las pequeñas diferencias se deben al redondeo y a la medición de las tandas. L
 
 2. Sin estadísticas conjuntas, el optimizador puede tratar `CIUDAD` y `COMUNIDAD` como independientes y multiplicar sus selectividades. Sin embargo, en los datos observados cada ciudad pertenece como máximo a una comunidad; conocer la ciudad aporta información sobre la comunidad. El grupo de columnas permite recoger esa relación, aunque mis datos no permiten demostrar aquí la mejora esperada ([C08 entender](lab7/evidencia/casos/20261125T180817Z_C08_entender.txt), [C08 solucionar](lab7/evidencia/casos/20261125T180852Z_C08_solucionar.txt)).
 
+**Repetición con datos de prueba:** se guardaron temporalmente las ciudades originales y se construyó una distribución de 2.000 ciudades correlacionadas con 17 comunidades. Para `Ciudad0042/COM09` hubo 50 clientes: el plan estimó 3 antes y 50 después de crear la estadística conjunta; las tres comprobaciones dieron OK ([C08 diagnosticar](lab7/evidencia/casos/20261125T203126Z_C08_diagnosticar.txt), [C08 validar](lab7/evidencia/casos/20261125T203130Z_C08_validar.txt)). Tras la prueba se restauraron las ciudades originales y se recogieron de nuevo las estadísticas; esos resultados pertenecen al conjunto temporal.
+
 ## Parte E · C12 · Estadísticas obsoletas
 1. Filas según las estadísticas y reales; método de unión y lecturas antes y después.
 2. ¿Por qué la tarea automática no lo habría arreglado a tiempo? ¿Quién debe recoger y cuándo?
@@ -83,6 +87,8 @@ Las pequeñas diferencias se deben al redondeo y a la medición de las tandas. L
 1. Antes de recoger, las estadísticas indicaban **100 filas** y había **200.100 reales**; el plan usaba **NESTED LOOPS** y el informe hizo **212.396 lecturas lógicas** ([C12 entender](lab7/evidencia/casos/20261125T181809Z_C12_entender.txt), [C12 diagnosticar](lab7/evidencia/casos/20261125T181816Z_C12_diagnosticar.txt), [C12 provocar](lab7/evidencia/casos/20261125T181803Z_C12_provocar.txt)). Después, las estadísticas reflejaron **200.100 filas**, el plan usó **HASH JOIN** y mostró **5.797 buffers** ([C12 solucionar](lab7/evidencia/casos/20261125T181949Z_C12_solucionar.txt), [C12 validar](lab7/evidencia/casos/20261125T182221Z_C12_validar.txt)). La comparación automática de lecturas falló porque no encontró el cursor anterior en caché; la evidencia de provocar conserva su cifra.
 
 2. La tarea automática está habilitada, pero depende de ventanas de mantenimiento: no garantiza una recogida inmediatamente después de una carga masiva y antes del primer informe. En mi salida la siguiente ventana figuraba a las 22:00 ([C12 observar](lab7/evidencia/casos/20261125T182306Z_C12_observar.txt)). El proceso o job responsable de la carga debe recoger las estadísticas de `T6.CARRITO` al terminar la carga y antes de ejecutar el informe; en la solución se usó `DBMS_STATS.GATHER_TABLE_STATS` ([C12 solucionar](lab7/evidencia/casos/20261125T181949Z_C12_solucionar.txt)).
+
+**Repetición:** al volver a ejecutar el caso completo, el informe pasó de 211.372 a 5.797 lecturas; las tres comprobaciones pasaron ([C12 validar](lab7/evidencia/casos/20261125T202510Z_C12_validar.txt)).
 
 ## Parte E · C13 · El ciclo de estadísticas con red
 1. Describe el ciclo que seguiste (pendientes, probar, publicar, restaurar, bloquear) con la vista que comprueba cada paso.
@@ -116,6 +122,8 @@ Las pequeñas diferencias se deben al redondeo y a la medición de las tandas. L
 
 **Comparación:** la solución coincidió con la propuesta: usar `BUSCAR_CP_V2` con un argumento `VARCHAR2`; la prueba mostró `INDEX RANGE SCAN` ([C17 solucionar](lab7/evidencia/casos/20261125T184458Z_C17_solucionar.txt)). En la misma carga, el p95 bajó de **81,2 a 0,66 ms** y las lecturas por ejecución de **5.056 a 96**. La validación cumplió el SLO, pero falló la comprobación de las líneas base ANTES y DESPUÉS ([C17 validar](lab7/evidencia/casos/20261125T184713Z_C17_validar.txt)).
 
+**Repetición de C17:** se registró la línea base ANTES y se repitió la misma carga con V2. El p95 fue 433,9 ms antes y 1,09 ms después; AWR mostró 5.233 frente a 94 lecturas por ejecución. Las cinco comprobaciones pasaron ([C17 provocar](lab7/evidencia/casos/20261125T202741Z_C17_provocar.txt), [C17 validar](lab7/evidencia/casos/20261125T202956Z_C17_validar.txt)).
+
 ## Parte F · C18 · SQL Plan Management
 
 **Propuesta antes de ejecutar la solución:** recuperaría el plan del lunes desde AWR como línea base SPM aceptada, para que Oracle pueda reutilizar el acceso por índice aunque falte el histograma. Compararía el plan, las lecturas por ejecución y el tiempo con los del martes, y comprobaría que se utiliza la línea base sin modificar las estadísticas. Espero recuperar el plan 1767728868, pero no presupongo una mejora: las medidas actuales son 5.213 lecturas/ejecución el lunes frente a 5.117 el martes. Como alternativa, corregiría la preferencia de estadísticas y recuperaría el histograma; puede mejorar la estimación, aunque no garantiza que el optimizador conserve el mismo plan.
@@ -125,30 +133,34 @@ Las pequeñas diferencias se deben al redondeo y a la medición de las tandas. L
 
 2. **Evolución y prevención:** la tarea comparó el plan nuevo autocapturado `SQL_PLAN_0a27u7nan424b95a18d93` con la línea base y lo dejó **no aceptado** porque no superó el criterio de beneficio: el informe indica que su rendimiento verificado fue peor. El plan cargado desde AWR permaneció aceptado ([C18 observar](lab7/evidencia/casos/20261125T201450Z_C18_observar.txt)). Queda corregir la preferencia `METHOD_OPT` de `T6.PEDIDO`, que fuerza `SIZE 1`, y recoger estadísticas que vuelvan a generar un histograma adecuado para `ESTADO`; después hay que comprobar las estimaciones y repetir la medición. SPM conserva un plan probado, pero no corrige por sí solo la causa de la pérdida del histograma ([C18 provocar](lab7/evidencia/casos/20261125T200748Z_C18_provocar.txt), [C18 diagnosticar](lab7/evidencia/casos/20261125T200956Z_C18_diagnosticar.txt)).
 
+**Repetición con datos de prueba:** se guardaron temporalmente los estados originales y se concentraron 20.000 pedidos `P` en una zona de la tabla. El lunes se midieron **263 lecturas** con el plan `1767728868`; el martes, **5.117** con `2571571058`; y con SPM, **227** con el plan del lunes ([C18 entender](lab7/evidencia/casos/20261125T203213Z_C18_entender.txt), [C18 validar](lab7/evidencia/casos/20261125T203217Z_C18_validar.txt)). La evolución dejó el plan nuevo sin aceptar al no superar el criterio de beneficio ([C18 observar](lab7/evidencia/casos/20261125T203219Z_C18_observar.txt)). Después se restauraron los estados y la preferencia de histograma de INC-608; las mediciones corresponden a la distribución temporal y no contradicen la primera prueba con los datos originales.
+
 ## Parte G · Incidente 1 · INC-608
 
 - **Hora y síntoma:** provocado a las 20:17 UTC para E052; el informe por estado pasó a estimar mal el valor `D` ([rotura](lab7/evidencia/incidentes/20261125T201711Z_INC-608_romper.txt), [verificación inicial](lab7/evidencia/incidentes/20261125T201724Z_INC-608_verificar.txt)).
 - **Diagnóstico (PB-3):** `incidente INC-608 pistas`; `t6 estad PEDIDO` mostró `ESTADO` sin histograma y `METHOD_OPT = FOR ALL COLUMNS SIZE 1` ([estadísticas](lab7/evidencia/herramientas/20261125T201717Z_t6-estad.txt)). `incidente INC-608 verificar` estimó 454.545 filas para `D`, pero había 0 reales. Una consulta `SELECT estado, COUNT(*) FROM t6.pedido GROUP BY estado` mostró 980.000 filas `E` y 20.000 `P`, ninguna `D`.
 - **Causa raíz antes del arreglo:** la preferencia `SIZE 1` elimina el histograma en la recogida. Además, el dato elegido por la semilla (`D`) no existe en la tabla actual, por lo que la comprobación exige una estimación de exactamente cero.
-- **Arreglo aplicado en SQL*Plus, FREEPDB1 (RB-2):** `EXEC DBMS_STATS.SET_TABLE_PREFS('T6','PEDIDO','METHOD_OPT','FOR ALL COLUMNS SIZE 1 FOR COLUMNS ESTADO SIZE 254')`; `EXEC DBMS_STATS.SET_TABLE_PREFS('T6','PEDIDO','PUBLISH','FALSE')`; `EXEC DBMS_STATS.GATHER_TABLE_STATS('T6','PEDIDO',no_invalidate=>FALSE)`; `ALTER SESSION SET optimizer_use_pending_statistics=TRUE;` y `EXPLAIN PLAN` para `D`. Las pendientes redujeron la estimación a 9.091 y usaron el índice ([prueba](lab7/evidencia/incidentes/20261125_INC-608_pendientes.txt); la última consulta de esa salida contiene un error de columna y no afecta a la recogida). Después: `EXEC DBMS_STATS.PUBLISH_PENDING_STATS('T6','PEDIDO')` y `EXEC DBMS_STATS.SET_TABLE_PREFS('T6','PEDIDO','PUBLISH','TRUE')`.
-- **Verificación:** el histograma `FREQUENCY` y la preferencia persistente dan OK; la estimación sigue en FALLO: 9.091 frente a 0 reales ([verificación](lab7/evidencia/incidentes/20261125T201804Z_INC-608_verificar.txt)). Incidente aún sin cerrar: no se han alterado pedidos para forzar la prueba.
+- **Arreglo aplicado en SQL*Plus, FREEPDB1 (RB-2):** `EXEC DBMS_STATS.SET_TABLE_PREFS('T6','PEDIDO','METHOD_OPT','FOR ALL COLUMNS SIZE 1 FOR COLUMNS ESTADO SIZE 254')`; `EXEC DBMS_STATS.SET_TABLE_PREFS('T6','PEDIDO','PUBLISH','FALSE')`; `EXEC DBMS_STATS.GATHER_TABLE_STATS('T6','PEDIDO',no_invalidate=>FALSE)`; `ALTER SESSION SET optimizer_use_pending_statistics=TRUE;` y `EXPLAIN PLAN` para `D`. Las pendientes redujeron la estimación a 9.091 y usaron el índice ([prueba](lab7/registro-inc608-pendientes.txt); la última consulta de esa salida contiene un error de columna y no afecta a la recogida). Después: `EXEC DBMS_STATS.PUBLISH_PENDING_STATS('T6','PEDIDO')` y `EXEC DBMS_STATS.SET_TABLE_PREFS('T6','PEDIDO','PUBLISH','TRUE')`.
+- **Datos de prueba y verificación:** como el valor `D` no existía, se guardaron los identificadores y estados originales de 20.000 pedidos `E` en `T6.INC608_RESTAURAR`, se cambiaron a `D` y se recogieron de nuevo las estadísticas. La estimación y el número real fueron **20.000**; histograma y preferencia también dan OK ([verificación](lab7/evidencia/incidentes/20261125T202155Z_INC-608_verificar.txt)). Para revertir después de las prácticas: `UPDATE t6.pedido p SET estado = (SELECT r.estado FROM t6.inc608_restaurar r WHERE r.id_pedido = p.id_pedido) WHERE EXISTS (SELECT 1 FROM t6.inc608_restaurar r WHERE r.id_pedido = p.id_pedido); COMMIT;` y volver a recoger estadísticas. La comprobación anterior con cero filas reales había fallado ([evidencia](lab7/evidencia/incidentes/20261125T201804Z_INC-608_verificar.txt)).
 - **Prevención:** conservar el histograma en `METHOD_OPT`, probar estadísticas pendientes y revisar que los valores seleccionados para el ejercicio existan en los datos.
 
-## Parte G · Incidente 2 · INC-6NN
-- **Síntoma (con números):**
-- **Playbook y pasos seguidos (herramientas y vistas):**
-- **Causa raíz:**
-- **Arreglo aplicado (órdenes exactas) y por qué ese:**
-- **Verificación (archivo de evidencia con todo OK):**
-- **Prevención (qué evitaría que se repita):**
+## Parte G · Incidente 2 · INC-609
 
-## Parte G · Incidente 3 · INC-6NN
-- **Síntoma (con números):**
-- **Playbook y pasos seguidos (herramientas y vistas):**
-- **Causa raíz:**
-- **Arreglo aplicado (órdenes exactas) y por qué ese:**
-- **Verificación (archivo de evidencia con todo OK):**
-- **Prevención (qué evitaría que se repita):**
+- **Hora y síntoma:** provocado a las 20:22 UTC; el informe de ventas se desbordaba a TEMP ([rotura](lab7/evidencia/incidentes/20261125T202207Z_INC-609_romper.txt)).
+- **Diagnóstico (PB-4):** `incidente INC-609 pistas`; `t6 memoria` mostró `pga_aggregate_target` de 512 MB y asesor de PGA al 100 % y sin sobreasignaciones ([evidencia](lab7/evidencia/herramientas/20261125T202231Z_t6-memoria.txt)); `incidente INC-609 verificar` mostró política `MANUAL`, una operación multipaso y un disparador activo ([evidencia](lab7/evidencia/incidentes/20261125T202236Z_INC-609_verificar.txt)). En SQL*Plus, `SELECT DBMS_METADATA.GET_DDL('TRIGGER','TRG_SESION_APLICACION','T6') FROM dual;` mostró que el disparador fijaba `workarea_size_policy = MANUAL` y `sort_area_size = 112 KB`.
+- **Causa raíz:** el disparador de logon de `T6_APP` imponía áreas de trabajo manuales pequeñas. Subir `pga_aggregate_target` no elimina ese límite de sesión.
+- **Arreglo mínimo:** en FREEPDB1, `ALTER TRIGGER T6.TRG_SESION_APLICACION DISABLE;`.
+- **Verificación:** sesión nueva con política `AUTO`, cero operaciones de una o varias pasadas y ningún disparador de logon activo que cambie la memoria; todo OK ([evidencia](lab7/evidencia/incidentes/20261125T202253Z_INC-609_verificar.txt)).
+- **Prevención:** revisar disparadores de logon y probar la política de memoria con una sesión nueva antes de cambiar parámetros globales; conservar una línea base del informe.
+
+## Parte G · Incidente 3 · INC-612
+
+- **Hora y síntoma:** provocado a las 20:23 UTC; la recuperación de contraseña recorría `CLIENTE` y consumía 1.251 lecturas para el correo de prueba ([rotura](lab7/evidencia/incidentes/20261125T202312Z_INC-612_romper.txt), [verificación inicial](lab7/evidencia/incidentes/20261125T202322Z_INC-612_verificar.txt)).
+- **Diagnóstico (PB-5):** `incidente INC-612 pistas`; `t6 indices CLIENTE` mostró índice en `EMAIL`, pero ninguno basado en función ([evidencia](lab7/evidencia/herramientas/20261125T202323Z_t6-indices.txt)). La consulta usa `UPPER(email)` y la verificación confirmó un recorrido completo.
+- **Causa raíz:** se había eliminado el índice de la expresión `UPPER(email)`; el índice normal de `EMAIL` no cubría ese predicado funcional.
+- **Arreglo (RB-3):** en FREEPDB1, `CREATE INDEX t6.ix_t6_cli_email_upper ON t6.cliente (UPPER(email)) INVISIBLE ONLINE;`; en la misma sesión, `ALTER SESSION SET optimizer_use_invisible_indexes=TRUE;` y `EXPLAIN PLAN FOR SELECT MAX(id_cliente) FROM t6.cliente WHERE UPPER(email)=UPPER('Cliente43172@TiendaSur.es');` mostraron `INDEX RANGE SCAN`. Después, `ALTER INDEX t6.ix_t6_cli_email_upper VISIBLE;`.
+- **Verificación:** índice funcional presente, búsqueda por índice y **35 lecturas** en vez de 1.251; todo OK ([evidencia](lab7/evidencia/incidentes/20261125T202342Z_INC-612_verificar.txt)).
+- **Prevención:** revisar `DBA_INDEX_USAGE` durante semanas y las consultas poco frecuentes; poner el índice invisible y observar antes de borrarlo. Medir también el coste de escritura de un índice nuevo.
 
 ## Parte H · Reflexión
 1. De todo el laboratorio, ¿qué cambio dio más mejora por menos riesgo? Justifícalo con tus números.
