@@ -1,0 +1,2 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T20:22:16Z origen=t6/sesiones
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T20:05:46 scn=3226536

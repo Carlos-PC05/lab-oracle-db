@@ -1,0 +1,37 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T18:44:12Z origen=t6/awr
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T17:37:13 scn=3203031
+    DBMS_ADDM.ANALYZE_DB(:tarea, @S1@, @S2@);
+                                 *
+ERROR at line 6:
+ORA-06550: line 6, column 34:
+PLS-00103: Encountered the symbol "@" when expecting one of the following:
+( * - + case end for mod new not null <an identifier>
+<a double-quoted delimited-identifier> <a bind variable>
+continue avg count current exists max min prior sql start
+stddev sum variance execute forall merge time timestamp
+interval date
+<a string literal with character set specification>
+<a number> <a single-quoted SQL string> pipe
+<an alternatively-quoted string literal with character set specification>
+Help: https://docs.oracle.com/error-help/db/ora-06550/
+
+ WHERE LOWER('addm') = 'top' AND s.snap_id > @S1@ AND s.snap_id <= @S2@
+                                             *
+ERROR at line 7:
+ORA-00936: missing expression
+Help: https://docs.oracle.com/error-help/db/ora-00936/
+
+ERROR:
+ORA-13608: The specified name NULL is invalid.
+ORA-06512: at "SYS.PRVT_ADVISOR", line 4099
+ORA-06512: at "SYS.PRVT_ADVISOR", line 7427
+ORA-06512: at "SYS.DBMS_SYS_ERROR", line 86
+ORA-06512: at "SYS.PRVT_ADVISOR", line 68
+ORA-06512: at "SYS.PRVT_ADVISOR", line 6265
+ORA-06512: at "SYS.PRVT_ADVISOR", line 7357
+ORA-06512: at "SYS.PRVT_ADVISOR", line 3981
+ORA-06512: at "SYS.DBMS_ADVISOR", line 728
+ORA-06512: at "SYS.DBMS_ADDM", line 764
+ORA-06512: at line 1
+Help: https://docs.oracle.com/error-help/db/ora-13608/
+

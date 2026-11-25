@@ -1,0 +1,18 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T18:03:54Z origen=t6/C04_entender
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T17:37:13 scn=3189709
+
+SYS@FREE> ALTER SESSION SET CONTAINER = FREEPDB1;
+
+Session altered.
+
+SYS@FREE> SET ECHO OFF
+== Lo que costó el informe ==
+
+MODO                FILAS         MS TEMP_ESCRITOS MB_TEMP
+-------------- ---------- ---------- ------------- -------
+LEGADO            1000000       4220          5468    42.7
+
+1 row selected.
+
+-- Lectura: escribió en TEMP (disco) para ORDENAR. Una ordenación es bloqueante: hasta tener la última fila
+-- no puede devolver la primera. Si no cabe en memoria, va a disco y vuelve a leerla.

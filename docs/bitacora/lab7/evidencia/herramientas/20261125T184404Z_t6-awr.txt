@@ -1,0 +1,23 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T18:44:04Z origen=t6/awr
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T17:37:13 scn=3203028
+    DBMS_ADDM.ANALYZE_DB(:tarea, @S1@, @S2@);
+                                 *
+ERROR at line 6:
+ORA-06550: line 6, column 34:
+PLS-00103: Encountered the symbol "@" when expecting one of the following:
+( * - + case end for mod new not null <an identifier>
+<a double-quoted delimited-identifier> <a bind variable>
+continue avg count current exists max min prior sql start
+stddev sum variance execute forall merge time timestamp
+interval date
+<a string literal with character set specification>
+<a number> <a single-quoted SQL string> pipe
+<an alternatively-quoted string literal with character set specification>
+Help: https://docs.oracle.com/error-help/db/ora-06550/
+
+ WHERE LOWER('top') = 'top' AND s.snap_id > @S1@ AND s.snap_id <= @S2@
+                                            *
+ERROR at line 7:
+ORA-00936: missing expression
+Help: https://docs.oracle.com/error-help/db/ora-00936/
+

@@ -1,0 +1,90 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T18:43:37Z origen=t6/C17_diagnosticar
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T17:37:13 scn=3203007
+
+==================== 1 · ASH: muestras de la web en los últimos 10 minutos, por acción, SQL y evento ====================
+[DBA] 
+[DBA] SYS> ALTER SESSION SET CONTAINER = FREEPDB1;
+[DBA] 
+[DBA] Session altered.
+[DBA] 
+[DBA] SYS> SET ECHO OFF
+[DBA] 
+[DBA] ACTION     SQL_ID        EVENTO                     MUESTRAS
+[DBA] ---------- ------------- ------------------------ ----------
+[DBA] C17_V1     0dbx7196jdajy ON CPU                          590
+[DBA] C17_V1     4hyvggxmf6usw resmgr:cpu quantum              106
+[DBA] C17_V1     0dbx7196jdajy resmgr:cpu quantum               56
+[DBA] C17_V1     b881wb311grva resmgr:cpu quantum                5
+[DBA] C17_V1     b881wb311grva ON CPU                            1
+[DBA] 
+[DBA] 5 rows selected.
+[DBA] 
+
+==================== 2 · AWR: las sentencias con más tiempo en el intervalo 8 → 9 (deltas) ====================
+[DBA] 
+[DBA] SYS> ALTER SESSION SET CONTAINER = FREEPDB1;
+[DBA] 
+[DBA] Session altered.
+[DBA] 
+[DBA] SYS> SET ECHO OFF
+[DBA] 
+[DBA] SQL_ID         PLAN_HASH       EJEC        SEG  GETS_EJEC TEXTO
+[DBA] ------------- ---------- ---------- ---------- ---------- ------------------------------------------
+[DBA] 4hyvggxmf6usw          0          2      311.2    9381110 DECLARE fin TIMESTAMP := SYSTIMESTAMP + NU
+[DBA] 0dbx7196jdajy 2571571058       3651      260.2       5056 SELECT /*+ t6_cp_v1 */ COUNT(*), SUM(IMPOR
+[DBA] b881wb311grva          0       3726        4.6          1 INSERT INTO T6.APP_LOG (ETQ, MS) VALUES (:
+[DBA] am3f3fh34nt7m          0          1        2.7      55021 DECLARE s NUMBER; BEGIN s := DBMS_WORKLOAD
+[DBA] 
+[DBA] 4 rows selected.
+[DBA] 
+
+==================== 3 · ADDM del intervalo 8 → 9 (solo los hallazgos y las recomendaciones) ====================
+[DBA] Total database time was 325 seconds.
+[DBA] The average number of active sessions was 2.64.
+[DBA] Summary of Findings
+[DBA] 1  Top SQL Statements               2.56 | 96.77         2
+[DBA] 2  PL/SQL Execution                 .94 | 35.48          1
+[DBA] 3  Resource Manager CPU Throttling  .61 | 23.23          2
+[DBA] Finding 1: Top SQL Statements
+[DBA] Impact is 2.56 active sessions, 96.77% of total activity.
+[DBA]    Recommendation 1: SQL Tuning
+[DBA]       Run SQL Tuning Advisor on the SELECT statement with SQL_ID
+[DBA]       SQL statement with SQL_ID "0dbx7196jdajy" was executed 3651 times and
+[DBA]    Recommendation 2: SQL Tuning
+[DBA]       SQL statement with SQL_ID "4hyvggxmf6usw" was executed 2 times and had
+[DBA] Finding 2: PL/SQL Execution
+[DBA] Impact is .94 active sessions, 35.48% of total activity.
+[DBA]    Recommendation 1: SQL Tuning
+[DBA] Finding 3: Resource Manager CPU Throttling
+[DBA] Impact is .61 active sessions, 23.23% of total activity.
+[DBA]    Recommendation 1: Database Configuration
+[DBA]    Recommendation 2: Database Configuration
+[DBA]       Impact is .61 active sessions, 23.23% of total activity.
+
+==================== 4 · El plan REAL del SQL que señalan ASH, AWR y ADDM: mira los predicados ====================
+[DBA] 
+[DBA] SYS> ALTER SESSION SET CONTAINER = FREEPDB1;
+[DBA] 
+[DBA] Session altered.
+[DBA] 
+[DBA] SYS> SET SERVEROUTPUT OFF LINESIZE 160
+[DBA] SYS> SELECT * FROM TABLE(DBMS_XPLAN.DISPLAY_CURSOR(
+[DBA]   2    (SELECT sql_id FROM v$sql WHERE sql_text LIKE 'SELECT /*+ t6_cp_v1 */%' AND ROWNUM = 1), NULL, 'TYPICAL -BYTES -NOTE -HINT_REPORT'));
+[DBA] 
+[DBA] PLAN_TABLE_OUTPUT
+[DBA] ------------------------------------------------------------------------------------------------------------------------------------------------------
+[DBA] SQL_ID  5qgz1p0cut7mx, child number 0
+[DBA] 
+[DBA] BEGIN DBMS_OUTPUT.DISABLE; END;
+[DBA] 
+[DBA] NOTE: cannot fetch plan for SQL_ID: 5qgz1p0cut7mx, CHILD_NUMBER: 0
+[DBA]       Please verify value of SQL_ID and CHILD_NUMBER;
+[DBA]       It could also be that the plan is no longer in cursor cache (check v$sql_plan)
+[DBA] 
+[DBA] 8 rows selected.
+[DBA] 
+[DBA] SYS> EXIT
+
+-- Lectura: TABLE ACCESS FULL con filter(TO_NUMBER("CODIGO_POSTAL")=:B1). La V1 pasa un NUMBER contra una columna
+
+-- VARCHAR2: Oracle convierte la COLUMNA en cada fila y el índice IX_T6_PED_CP no se puede usar (como en C07).

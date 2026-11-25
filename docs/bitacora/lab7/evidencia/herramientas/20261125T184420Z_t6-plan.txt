@@ -1,0 +1,17 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T18:44:20Z origen=t6/plan
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T17:37:13 scn=3203072
+== 1 · Hijos del cursor 0dbx7196jdajy ==
+== 2 · Plan real (ALLSTATS LAST) con predicados y variables de enlace observadas ==
+
+PLAN_TABLE_OUTPUT
+---------------------------------------------------------------------------------------------------------------------------------------------------------------------
+SQL_ID: 0dbx7196jdajy cannot be found
+
+== 3 · Historia del plan en AWR (si la sentencia llegó a una instantánea) ==
+
+   SNAP_ID  PLAN_HASH       EJEC    MS_EJEC  GETS_EJEC
+---------- ---------- ---------- ---------- ----------
+         9 2571571058       3651       71.3       5056
+         7 2571571058       3795       69.5       5073
+         5 2571571058       2003       69.4       5004
+-- ¿Dos plan_hash distintos para el mismo SQL_ID? El plan ha cambiado: playbook PB-3.
