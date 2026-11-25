@@ -1,0 +1,9 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T18:34:37Z origen=t6/base
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T17:37:13 scn=3198544
+BEGIN
+*
+ERROR at line 1:
+ORA-20610: El SQL_ID jj no está en V$SQLSTATS: ejecútalo antes o búscalo con «t6 top»
+ORA-06512: at line 9
+
+== Líneas base registradas (T6.LINEA_BASE) ==

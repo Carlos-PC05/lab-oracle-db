@@ -1,0 +1,3 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T18:36:17Z origen=t6/C17_diagnosticar
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T17:37:13 scn=3198623
+Falta el intervalo AWR: ejecuta antes  caso C17 provocar

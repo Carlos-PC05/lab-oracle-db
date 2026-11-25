@@ -1,0 +1,8 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T20:14:27Z origen=t6/spm
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T20:05:46 scn=3221981
+== Líneas base ==
+
+SQL_HANDLE           PLAN_NAME                        ENA ACC FIX ORIGIN                       TEXTO
+-------------------- -------------------------------- --- --- --- ---------------------------- ----------------------------------
+SQL_0508fa3d1542088b SQL_PLAN_0a27u7nan424b95a18d93   YES NO  NO  AUTO-CAPTURE                 SELECT /* t6_c18_pendientes */ COU
+SQL_0508fa3d1542088b SQL_PLAN_0a27u7nan424ba00b9863   YES YES NO  MANUAL-LOAD-FROM-AWR         SELECT /* t6_c18_pendientes */ COU

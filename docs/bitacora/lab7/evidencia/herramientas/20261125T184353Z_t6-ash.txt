@@ -1,0 +1,24 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T18:43:53Z origen=t6/ash
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T17:37:13 scn=3203023
+== 1 · Minuto a minuto: sesiones activas medias (muestras / 60) ==
+
+MINUT        AAS     EN_CPU  ESPERANDO
+----- ---------- ---------- ----------
+18:33        .25         12          3
+18:34        .77         37          9
+18:36       1.47         73         15
+18:37        2.8        127         41
+18:38       1.23         56         18
+18:39         .3         18          0
+18:40       2.63        121         37
+18:41        2.4        109         35
+== 2 · Por SQL_ID, módulo y evento ==
+
+SQL_ID        MODULE           ACTION         EVENTO                               MUESTRAS
+------------- ---------------- -------------- ---------------------------------- ----------
+0dbx7196jdajy tienda_web       C17_V1         ON CPU                                    552
+4hyvggxmf6usw tienda_web       C17_V1         resmgr:cpu quantum                        102
+0dbx7196jdajy tienda_web       C17_V1         resmgr:cpu quantum                         51
+b881wb311grva tienda_web       C17_V1         resmgr:cpu quantum                          5
+b881wb311grva tienda_web       C17_V1         ON CPU                                      1
+== 3 · Sesiones bloqueadas por otra (si las hay) ==
