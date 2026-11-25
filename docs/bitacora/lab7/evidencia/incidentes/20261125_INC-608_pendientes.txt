@@ -1,0 +1,59 @@
+
+SQL*Plus: Release 23.26.3.0.0 - Production on Wed Nov 25 20:17:46 2026
+Version 23.26.3.0.0
+
+Copyright (c) 1982, 2026, Oracle.  All rights reserved.
+
+
+Connected to:
+Oracle AI Database 26ai Free Release 23.26.3.0.0 - Develop, Learn, and Run for Free
+Version 23.26.3.0.0
+
+20:17:46 E052 SYS@FREE> 
+Session altered.
+
+20:17:46 E052 SYS@FREE> 20:17:46 E052 SYS@FREE> 
+PL/SQL procedure successfully completed.
+
+20:17:46 E052 SYS@FREE> 
+PL/SQL procedure successfully completed.
+
+20:17:46 E052 SYS@FREE> 
+PL/SQL procedure successfully completed.
+
+20:17:51 E052 SYS@FREE> 
+Session altered.
+
+20:17:51 E052 SYS@FREE> 
+Explained.
+
+20:17:51 E052 SYS@FREE> 
+PLAN_TABLE_OUTPUT
+------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+Plan hash value: 1767728868
+
+-------------------------------------------------------------------------
+| Id  | Operation			     | Name		| Rows	|
+-------------------------------------------------------------------------
+|   0 | SELECT STATEMENT		     |			|     1 |
+|   1 |  SORT AGGREGATE 		     |			|     1 |
+|   2 |   TABLE ACCESS BY INDEX ROWID BATCHED| PEDIDO		|  9091 |
+|   3 |    INDEX RANGE SCAN		     | IX_T6_PED_ESTADO |  9091 |
+-------------------------------------------------------------------------
+
+10 rows selected.
+
+20:17:51 E052 SYS@FREE> 
+    REALES
+----------
+	 0
+
+20:17:51 E052 SYS@FREE> SELECT column_name, histogram FROM dba_tab_pending_stats WHERE 1=0
+                    *
+ERROR at line 1:
+ORA-00904: "HISTOGRAM": invalid identifier
+Help: https://docs.oracle.com/error-help/db/ora-00904/
+
+
+20:17:51 E052 SYS@FREE> Disconnected from Oracle AI Database 26ai Free Release 23.26.3.0.0 - Develop, Learn, and Run for Free
+Version 23.26.3.0.0

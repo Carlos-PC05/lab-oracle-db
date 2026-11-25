@@ -125,13 +125,14 @@ Las pequeñas diferencias se deben al redondeo y a la medición de las tandas. L
 
 2. **Evolución y prevención:** la tarea comparó el plan nuevo autocapturado `SQL_PLAN_0a27u7nan424b95a18d93` con la línea base y lo dejó **no aceptado** porque no superó el criterio de beneficio: el informe indica que su rendimiento verificado fue peor. El plan cargado desde AWR permaneció aceptado ([C18 observar](lab7/evidencia/casos/20261125T201450Z_C18_observar.txt)). Queda corregir la preferencia `METHOD_OPT` de `T6.PEDIDO`, que fuerza `SIZE 1`, y recoger estadísticas que vuelvan a generar un histograma adecuado para `ESTADO`; después hay que comprobar las estimaciones y repetir la medición. SPM conserva un plan probado, pero no corrige por sí solo la causa de la pérdida del histograma ([C18 provocar](lab7/evidencia/casos/20261125T200748Z_C18_provocar.txt), [C18 diagnosticar](lab7/evidencia/casos/20261125T200956Z_C18_diagnosticar.txt)).
 
-## Parte G · Incidente 1 · INC-6NN
-- **Síntoma (con números):**
-- **Playbook y pasos seguidos (herramientas y vistas):**
-- **Causa raíz:**
-- **Arreglo aplicado (órdenes exactas) y por qué ese:**
-- **Verificación (archivo de evidencia con todo OK):**
-- **Prevención (qué evitaría que se repita):**
+## Parte G · Incidente 1 · INC-608
+
+- **Hora y síntoma:** provocado a las 20:17 UTC para E052; el informe por estado pasó a estimar mal el valor `D` ([rotura](lab7/evidencia/incidentes/20261125T201711Z_INC-608_romper.txt), [verificación inicial](lab7/evidencia/incidentes/20261125T201724Z_INC-608_verificar.txt)).
+- **Diagnóstico (PB-3):** `incidente INC-608 pistas`; `t6 estad PEDIDO` mostró `ESTADO` sin histograma y `METHOD_OPT = FOR ALL COLUMNS SIZE 1` ([estadísticas](lab7/evidencia/herramientas/20261125T201717Z_t6-estad.txt)). `incidente INC-608 verificar` estimó 454.545 filas para `D`, pero había 0 reales. Una consulta `SELECT estado, COUNT(*) FROM t6.pedido GROUP BY estado` mostró 980.000 filas `E` y 20.000 `P`, ninguna `D`.
+- **Causa raíz antes del arreglo:** la preferencia `SIZE 1` elimina el histograma en la recogida. Además, el dato elegido por la semilla (`D`) no existe en la tabla actual, por lo que la comprobación exige una estimación de exactamente cero.
+- **Arreglo aplicado en SQL*Plus, FREEPDB1 (RB-2):** `EXEC DBMS_STATS.SET_TABLE_PREFS('T6','PEDIDO','METHOD_OPT','FOR ALL COLUMNS SIZE 1 FOR COLUMNS ESTADO SIZE 254')`; `EXEC DBMS_STATS.SET_TABLE_PREFS('T6','PEDIDO','PUBLISH','FALSE')`; `EXEC DBMS_STATS.GATHER_TABLE_STATS('T6','PEDIDO',no_invalidate=>FALSE)`; `ALTER SESSION SET optimizer_use_pending_statistics=TRUE;` y `EXPLAIN PLAN` para `D`. Las pendientes redujeron la estimación a 9.091 y usaron el índice ([prueba](lab7/evidencia/incidentes/20261125_INC-608_pendientes.txt); la última consulta de esa salida contiene un error de columna y no afecta a la recogida). Después: `EXEC DBMS_STATS.PUBLISH_PENDING_STATS('T6','PEDIDO')` y `EXEC DBMS_STATS.SET_TABLE_PREFS('T6','PEDIDO','PUBLISH','TRUE')`.
+- **Verificación:** el histograma `FREQUENCY` y la preferencia persistente dan OK; la estimación sigue en FALLO: 9.091 frente a 0 reales ([verificación](lab7/evidencia/incidentes/20261125T201804Z_INC-608_verificar.txt)). Incidente aún sin cerrar: no se han alterado pedidos para forzar la prueba.
+- **Prevención:** conservar el histograma en `METHOD_OPT`, probar estadísticas pendientes y revisar que los valores seleccionados para el ejercicio existan en los datos.
 
 ## Parte G · Incidente 2 · INC-6NN
 - **Síntoma (con números):**
