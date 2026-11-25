@@ -1,0 +1,28 @@
+== EVIDENCIA alumno=E052 hora=2026-11-25T18:29:48Z origen=t6/indices
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-25T17:37:13 scn=3196015
+== 1 · Índices de T6.PEDIDO ==
+
+INDEX_NAME           COLUMNAS                       STATUS     VISIBLE   LEAF_BLOCKS DISTINCT_KEYS CLUSTERING_FACTOR CF PARECE
+-------------------- ------------------------------ ---------- --------- ----------- ------------- ----------------- ------------
+IX_T6_PED_CLIENTE    ID_CLIENTE                     VALID      VISIBLE          2216        100824           1000000 A FILAS
+IX_T6_PED_CP         CODIGO_POSTAL                  VALID      VISIBLE          2370         11000           1000000 A FILAS
+IX_T6_PED_ESTADO     ESTADO                         VALID      VISIBLE          1812             2             10220 A BLOQUES
+IX_T6_PED_FECHA      FECHA_PEDIDO                   VALID      VISIBLE          2653          1365           1000000 A FILAS
+PK_T6_PEDIDO         ID_PEDIDO                      VALID      VISIBLE          2088       1000000              5110 A BLOQUES
+== 2 · Redundancia: índices cuyas columnas son el principio de otro índice ==
+== 3 · Uso registrado (DBA_INDEX_USAGE) ==
+
+INDEX_NAME              ACCESOS EJECUCIONES LAST_USED
+-------------------- ---------- ----------- -------------------
+PK_T6_PEDIDO                794         794 2026-11-25 18:07:15
+== 4 · Selectividad de cada columna (1/distintos) ==
+
+COLUMN_NAME      NUM_DISTINCT PCT_POR_VALOR HISTOGRAM
+---------------- ------------ ------------- ---------------
+ID_PEDIDO             1000000         .0001 NONE
+ID_CLIENTE             100824          .001 NONE
+CODIGO_POSTAL           11000         .0091 NONE
+IMPORTE                 10000           .01 NONE
+FECHA_PEDIDO             1365         .0733 NONE
+ESTADO                      2            50 NONE
+CANAL                       1           100 NONE
