@@ -1,0 +1,21 @@
+== EVIDENCIA alumno=E033 hora=2026-11-17T21:21:17Z origen=lab6-validacion-guardia
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-17T21:09:17 scn=3168376
+== INC-601: sesiones bloqueadas y fila 101 ==
+
+BLOQUEADAS
+----------
+	 0
+
+ESTUDIANTE_ID ESTADO
+------------- --------
+	  101 ACTIVO
+== INC-602: servicio definido y arrancado ==
+
+NAME		 AR
+---------------- --
+academia_app	 SI
+== INC-603: cuenta de aplicación ==
+
+USERNAME       ACCOUNT_STATUS
+-------------- ----------------
+APP_ACADEMIA   OPEN

@@ -1,0 +1,42 @@
+== EVIDENCIA alumno=E033 hora=2026-11-17T21:15:04Z origen=08-diagnostico
+== EVIDENCIA contenedor=c05081897543 dbid=1509902213 arranque=2026-11-17T21:09:17 scn=3167823
+== 1. ¿Quién espera, en qué y por culpa de quién? ==
+
+  SID SERIAL# USERNAME      MODULE      ACTION         EVENT                          WAIT_CLASS    SEG  BLOQ
+----- ------- ------------- ----------- -------------- ------------------------------ ----------- ----- -----
+   65   41059 APP_ACADEMIA  matriculas  cierre-periodo PL/SQL lock timer              Idle           31      
+   66   28654 ANA_GARCIA    secretaria  ficha-alumno   enq: TX - row lock contention  Application    27    65
+== 2. ¿Por qué fila exacta? ==
+
+  SID OBJECT_NAME         ARCHIVO     BLOQUE       FILA
+----- ---------------- ---------- ---------- ----------
+   66 ACA_ESTUDIANTES        1024        783          5
+== 3. Los bloqueos: quién TIENE el TX (lmode 6, block 1) y quién lo PIDE (request 6) ==
+
+  SID TY        ID1        ID2      LMODE    REQUEST      BLOCK
+----- -- ---------- ---------- ---------- ---------- ----------
+   65 TM      73129          0          3          0          0
+   65 TX     327687        565          6          0          1
+   66 TM      73129          0          3          0          0
+   66 TX     327687        565          0          6          0
+== 4. ¿Cuánto trabajo se desharía si se termina al bloqueador? ==
+
+  SID MODULE       USED_UBLK  USED_UREC START_TIME          
+----- ----------- ---------- ---------- --------------------
+   65 matriculas           1          1 11/17/26 21:14:37   
+== 5. ASH lo guardó segundo a segundo (aunque el bloqueo ya no exista, esto queda) ==
+
+T          SID EVENT                           BLOQ
+-------- ----- ------------------------------ -----
+21:15:09    66 enq: TX - row lock contention     65
+21:15:08    66 enq: TX - row lock contention     65
+21:15:07    66 enq: TX - row lock contention     65
+21:15:06    66 enq: TX - row lock contention     65
+21:15:05    66 enq: TX - row lock contention     65
+== 6. Servicios: ¿están arrancados todos los que existen? (NO = existe, pero el listener no lo anuncia) ==
+
+    CON_ID NAME             ARRANCADO
+---------- ---------------- ---------
+         3 FREEPDB1         SI       
+         3 academia_app     NO       
+== 7. Cuentas que no son de Oracle y no están OPEN (LOCKED = a mano; LOCKED(TIMED) = intentos fallidos) ==
